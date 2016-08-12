@@ -319,7 +319,7 @@ Redux | 后端
 `reducer` 内部对 `state` 的处理 | 控制器对数据库进行增删改
 `reducer` 返回 `nextState` 给 `store` | 将修改后的记录写回数据库
 
-## &sect; 最简单的例子
+## &sect; 最简单的例子 ( [JS Bin][jsbin] )
 
 ```html
 <!DOCTYPE html>
@@ -378,4 +378,5 @@ console.log( store.getState() ); // { counter: 1 }
 [flux-action-pattern]: https://github.com/acdlite/flux-standard-action
 [redux-devtools]: https://github.com/gaearon/redux-devtools
 [immutable]: https://github.com/facebook/immutable-js
+[jsbin]: http://jsbin.com/zivare/edit?html,console
 
