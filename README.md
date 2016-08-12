@@ -99,7 +99,8 @@ DevTools 仅仅是简单粗暴地将整个应用状态克隆保存
 
 总结一下：Redux 与传统的开发方式不一样在于：  
 将所有的动作与状态都统一管理，有据可循  
-因此，开发过程中实现撤销重做、记录日志等操作易如反掌
+开发过程中实现撤销重做、记录日志等操作易如反掌  
+并且让前后端同构（服务端渲染）成为可能
 
 ## &sect; Store
 首先要区分 `store` 和 `state`
@@ -147,7 +148,7 @@ import { createStore } from 'redux'
 const store = createStore(reducer, initialState)
 ```  
 > 现在您只需要记住 `reducer` 是一个 **函数**，负责**更新并返回**一个**新的** `state`  
-> 而 `initialState` 主要用于前后端同构的数据同步（详情请关注服务端渲染）   
+> 而 `initialState` 主要用于前后端同构的数据同步（详情请关注 React 服务端渲染）   
 
 ## &sect; Action
 上面提到，`action`（动作）实质上是包含 `type` 属性的普通对象  
