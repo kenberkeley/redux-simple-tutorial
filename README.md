@@ -353,16 +353,16 @@ function reducer(state, action) {
 
 var store = Redux.createStore(reducer);
 
-store.getState(); // { counter: 0 }
+console.log( store.getState() ); // { counter: 0 }
 
 store.dispatch(inc());
-store.getState(); // { counter: 1 }
+console.log( store.getState() ); // { counter: 1 }
 
 store.dispatch(inc());
-store.getState(); // { counter: 2 }
+console.log( store.getState() ); // { counter: 2 }
 
 store.dispatch(dec());
-store.getState(); // { counter: 1 }
+console.log( store.getState() ); // { counter: 1 }
 </script>
 </body>
 </html>
