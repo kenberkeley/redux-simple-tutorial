@@ -301,7 +301,7 @@ Redux 还规定，若没有任何修改，**一定要返回一个 `state`**，�
 * `store` 由 Redux 的 `createStore(reducer)` 生成
 * `state` 通过 `store.getState()` 获取，本质上一般是一个存储着整个应用状态的**对象**
 * `action` 本质上是一个包含 `type` 属性的普通**对象**，由 Action Creator (**函数**) 产生
-* 改变 `state` 必须 `dispatch` 一个 `action`，Redux 会自动执行 `reducer(state, action)` 函数
+* 改变 `state` 必须 `dispatch` 一个 `action`，随后 Redux 会执行 `reducer(state, action)` 以更新 `state`
 * `reducer` 本质上是根据 `action.type` 来更新 `state` 并返回 `nextState` 的**函数**
 * `reducer` 不能返回空值，因为 Redux 会把它的返回值直接替换掉原来的 `state`
 
