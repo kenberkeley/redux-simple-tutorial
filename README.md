@@ -316,7 +316,7 @@ Redux | 后端
 `action` | 请求的 API
 `reducer` 中的 `switch` 分支 | 路由
 `reducer` 中 `case` 内部对 `state` 的处理 | 控制器对数据库进行增删改
-`reducer` 返回的 `nextState` | 将修改后的记录写回数据库
+`reducer` 返回 `nextState` 给 `store` | 将修改后的记录写回数据库
 
 ## &sect; 最简单的例子
 
