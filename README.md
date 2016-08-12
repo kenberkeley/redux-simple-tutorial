@@ -268,18 +268,23 @@ $('#btn').on('click', function() {
 并且是对应写入 `state.todos` 数组中？这就是 `reducer` 的作用，请继续往下看
 
 ## &sect; Reducer
-> Reducers 必须是同步的函数  
+> Reducers 必须是同步的纯函数  
 
-用户 `dispatch(action)` 后，会触发 `reducer`  的执行  
-`reducer` 的实质是一个函数，根据 `action.type` 来更新 `state` 并返回 `nextState` 给 `store`
+用户每次 `dispatch(action)` 后，都会触发 `reducer`  的执行  
+`reducer` 的实质是一个**函数**，根据 `action.type` 来更新 `state` 并返回 `nextState`
 
 在上面 Action Creator 中提到的 `reducer` 大概是长这个样子 (为了容易理解，在此不使用 ES6 / [Immutable.js][immutable])：
 
 ```js
 /** 本代码块记为 code-7 **/
+var initState = {
+  counter: 0,
+  todos: []
+}
+
 function reducer(state, action) {
-  // 应用初始状态是在第一次执行 reducer 时设置的（除非是服务端渲染）
-  state = state || { counter: 0, todos: [] }
+  // 应用的初始状态是在第一次执行 reducer 时设置的（除非是服务端渲染）
+  if (!state) state = initState
   
   switch (action.type) {
     case 'ADD_TODO':
@@ -293,9 +298,10 @@ function reducer(state, action) {
 }
 ```
 
-为什么不能直接 `state.todos.push(action.payload)`，要克隆一份 `nextState` 后才操作？  
-因为这是 Redux 规定的，主要原因是 JS 复杂数据结构（对象、数组）传的是引用  
-Redux 还规定，若没有任何修改，**一定要返回一个 `state`**，否则整个 `state` 都会被 `undefined` 替换
+Redux 规定，不能直接在 `state` 上更改，必须先克隆一份 `nextState` 再在其上进行修改，最后返回 `nextState`  
+Redux 还规定，若没有任何修改，**一定要返回一个 `state`**，否则 `store` 会把对应的 `state` 替换成 `undefined`
+
+> `reducer` 返回啥，`store` 就会不假思索地把 `state` 替换成啥
 
 ## &sect; 总结
 
@@ -304,9 +310,9 @@ Redux 还规定，若没有任何修改，**一定要返回一个 `state`**，�
 * `action` 本质上是一个包含 `type` 属性的普通**对象**，由 Action Creator (**函数**) 产生
 * 改变 `state` 必须 `dispatch` 一个 `action` 来触发 Redux 执行 `reducer(state, action)` 以更新 `state`
 * `reducer` 本质上是根据 `action.type` 来更新 `state` 并返回 `nextState` 的**函数**
-* `reducer` 不能返回空值，因为 Redux 会把它的返回值直接替换掉原来的 `state`
+* `reducer` 不能返回空值，因为 `store` 会把它的返回值直接替换掉原来的 `state`
 
-> Action Creator => `action` => `store.dispatch(action)` => `reducer(state, action)` => `nextState`
+> Action Creator => `action` => `store.dispatch(action)` => `reducer(state, action)` => `nextState` => `store`
 
 ### ⊙ Redux 与后端的对照
 Redux | 后端
