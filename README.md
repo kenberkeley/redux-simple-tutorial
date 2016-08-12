@@ -271,7 +271,7 @@ $('#btn').on('click', function() {
 > Reducers 必须是同步的函数  
 
 用户 `dispatch(action)` 后，会触发 `reducer`  的执行  
-`reducer` 的实质是一个函数，根据 `action.type` 来更新 `state` 并返回**新的** `state`
+`reducer` 的实质是一个函数，根据 `action.type` 来更新 `state` 并返回 `nextState` 给 `store`
 
 在上面 Action Creator 中提到的 `reducer` 大概是长这个样子 (为了容易理解，在此不使用 ES6 / [Immutable.js][immutable])：
 
