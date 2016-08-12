@@ -87,8 +87,8 @@ GET  /logout  # 退出登录
 
 ***
 
-Redux 一直鼓吹的 “ 实现出华丽如时光旅行一般的调试效果 ”  
-实际上就是可实现开发调试过程中的**撤销与重做**（详情请看 [Redux DevTools][redux-devtools]）  
+Redux 一直鼓吹的 “ 可实现出华丽如时光旅行一般的调试效果 ”  
+实际上就是开发调试过程中可以**撤销与重做**（需要借助 [Redux DevTools][redux-devtools]）  
 
 使用 DevTools，就可以将应用的所有状态都保存快照  
 而且由于可以记录动作的日志，那就可以像 Git 般  
