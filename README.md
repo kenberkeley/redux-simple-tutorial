@@ -1,12 +1,12 @@
 # Redux 简明教程
 > ### 写在前面  
-> 在开始下面的内容前，您最好已经看过 [Redux 中文文档](redux-cn-docs)  
-> 最好还把玩过 [Redux Example](redux-example) 中的 counter / todos 示例  
+> 在开始下面的内容前，您最好已经看过 [Redux 中文文档][redux-cn-docs]  
+> 最好还把玩过 [Redux Example][redux-example] 中的 counter / todos 示例  
 > 如果折腾完后，您还是对 Redux 的理解一片混乱  
 > 那么很恭喜您，本文就是针对您这种状况而写的  
 
 ## &sect; 为什么要用 Redux
-> 当然还有 [Flux](flux)、[Reflux](reflux)、[Mobx](mobx) 等状态管理库可供选择
+> 当然还有 [Flux][flux]、[Reflux][reflux]、[Mobx][mobx] 等状态管理库可供选择
 
 不知道您是否有后端的开发经验  
 后端一般会有记录访问日志的**中间件**  
@@ -88,7 +88,7 @@ GET  /logout  # 退出登录
 ***
 
 Redux 一直鼓吹的 “ 实现出华丽如时光旅行一般的调试效果 ”  
-实际上就是可实现开发调试过程中的**撤销与重做**（详情请看 [Redux DevTools](redux-devtools)）  
+实际上就是可实现开发调试过程中的**撤销与重做**（详情请看 [Redux DevTools][redux-devtools]）  
 
 使用 Redux，就可以将应用的所有状态都保存快照  
 而且由于可以记录动作的日志，那就可以像 Git 般  
@@ -189,7 +189,7 @@ const store = createStore(reducer, initialState)
 }
 ```
 
-> 虽说没有约束，但最好还是遵循[规范](flux-action-pattern)
+> 虽说没有约束，但最好还是遵循[规范][flux-action-pattern]
 
 如果我们需要新增一个代办事项  
 实际上就是将 `code-2` 中的 `payload` **“写入”**到 `code-1 应用初始状态 state.todos` 数组中：
@@ -272,7 +272,7 @@ $('#btn').on('click', function() {
 用户 `dispatch(action)` 后，会触发 `reducer`  的执行  
 `reducer` 的实质是一个函数，根据 `action.type` 来更新 `state` 并返回**新的** `state`
 
-在上面 Action Creator 中提到的 `reducer` 大概是长这个样子 (为了容易理解，在此不使用 ES6 / [Immutable.js](immutable))：
+在上面 Action Creator 中提到的 `reducer` 大概是长这个样子 (为了容易理解，在此不使用 ES6 / [Immutable.js][immutable])：
 
 ```js
 /** 本代码块记为 code-7 **/
@@ -370,10 +370,11 @@ store.getState(); // { counter: 1 }
 
 [redux-cn-docs]: http://cn.redux.js.org/
 [redux-example]: https://github.com/reactjs/redux/tree/master/examples
-[immutable]: https://github.com/facebook/immutable-js
 [flux]: https://github.com/facebook/flux
 [reflux]: https://github.com/reflux/refluxjs
 [mobx]: https://github.com/mobxjs/mobx
 [redux]: https://github.com/reactjs/redux
 [flux-action-pattern]: https://github.com/acdlite/flux-standard-action
 [redux-devtools]: https://github.com/gaearon/redux-devtools
+[immutable]: https://github.com/facebook/immutable-js
+
