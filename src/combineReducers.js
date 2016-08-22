@@ -82,6 +82,7 @@ function assertReducerSanity(reducers) {
 }
 
 /**
+ * 
  * Turns an object whose values are different reducer functions, into a single
  * reducer function. It will call every child reducer, and gather their results
  * into a single state object, whose keys correspond to the keys of the passed
@@ -119,6 +120,7 @@ export default function combineReducers(reducers) {
     sanityError = e
   }
 
+  // 返回合成后的 reducer
   return function combination(state = {}, action) {
     if (sanityError) {
       throw sanityError
