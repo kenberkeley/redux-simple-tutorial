@@ -129,7 +129,7 @@ app.use(loggerMiddleware)
 ### ※ 小结
 
 为何前后端对于这类需求的处理竟然大相径庭？后端为何可以如此优雅？  
-原因在于，后端具有**统一的入口**与**统一的状态管理（数据库）**，因此可以引入**中间件机制**来统一处理业务逻辑**以外**的功能  
+原因在于，后端具有**统一的入口**与**统一的状态管理（数据库）**，因此可以引入**中间件机制**来**统一**实现某些功能  
 
 多年来，前端工程师忍辱负重，操着卖白粉的心，赚着买白菜的钱，一直处于程序员鄙视链的底层  
 于是有大牛就把后端 MVC 的开发思维搬到前端，**将应用中所有的动作与状态都统一管理**，让一切**有据可循**
@@ -186,7 +186,7 @@ import { createStore } from 'redux'
 ...
 const store = createStore(reducer, initialState) // store 是靠传入 reducer 生成的哦！
 ```  
-> 现在您只需要记住 `reducer` 是一个 **函数**，负责**更新并返回**一个**新的** `state`  
+> 现在您只需要记住 `reducer` 是一个 **函数**，负责**更新**并返回一个**新的** `state`  
 > 而 `initialState` 主要用于前后端同构的数据同步（详情请关注 React 服务端渲染）   
 
 ## &sect; Action
@@ -283,7 +283,7 @@ $('#btn').on('click', function() {
 </script>
 ```
 
-在输入框中输入 “待办事项2” 后点击一下按钮，我们的 `state` 就变成了：
+在输入框中输入 “待办事项2” 后，点击一下提交按钮，我们的 `state` 就变成了：
 
 ```js
 /** 本代码块记为 code-6 **/
@@ -303,16 +303,16 @@ $('#btn').on('click', function() {
 
 > 通俗点讲，Action Creator 用于绑定到用户的操作（点击按钮等），其返回值 `action` 用于触发 `dispatch(action)`
 
-刚刚提到过，`action` 明明就没有强制的规范，为什么 `store.dispatch(action)` 之后  
-Redux 会明确知道是提取 `action.payload`，并且是对应写入到 `state.todos` 数组中？又是谁负责“写入”的呢？  
-悬念即将揭晓...
+刚刚提到过，`action` 明明就没有强制的规范，为什么 `store.dispatch(action)` 之后，  
+Redux 会明确知道是提取 `action.payload`，并且是对应写入到 `state.todos` 数组中？  
+又是谁负责“写入”的呢？悬念即将揭晓...
 
 ## &sect; Reducer
 > Reducers 必须是同步的纯函数  
 
 用户每次 `dispatch(action)` 后，都会触发 `reducer`  的执行  
-`reducer` 的实质是一个**函数**，根据 `action.type` 来***更新*** `state` 并返回 `nextState`  
-`store` 作为 `state` 的管理者，会收到 `reducer` 的返回来的 `nextState`，并用它**完全替换掉**原来的 `state`
+`reducer` 的实质是一个**函数**，根据 `action.type` 来**更新** `state` 并返回 `nextState`  
+最后会用 `reducer` 的返回值 `nextState` **完全替换掉**原来的 `state`
 
 > 注意：上面的这个 “更新” 并不是指 `reducer` 可以直接对 `state` 进行修改  
 > Redux 规定，须先复制一份 `state`，在副本 `nextState` 上进行修改操作  
@@ -366,6 +366,7 @@ Redux | 传统后端 MVC
 `state` | 数据库中存储的数据
 `dispatch(action)` | 用户发起请求
 `action: { type, payload }` | `type` 表示请求的 URL，`payload` 表示请求的数据
+`reducer` | 路由 + 控制器（handler）
 `reducer` 中的 `switch-case` 分支 | 路由，根据 `action.type` 路由到对应的控制器
 `reducer` 内部对 `state` 的处理 | 控制器对数据库进行增删改操作
 `reducer` 返回 `nextState` 给 `store` | 将修改后的记录写回数据库
