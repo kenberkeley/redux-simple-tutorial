@@ -1,5 +1,4 @@
 # Redux 简明教程
-
 > 原文链接：https://github.com/kenberkeley/redux-simple-tutorial
 
 > ### 写在前面  

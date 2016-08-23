@@ -28,7 +28,7 @@
 
 ```
 /**
- * 看起来逼格很高的样子，实际上作用就是：
+ * 看起来逼格很高，实际运用其实是这样子的：
  * compose(f, g, h)(...arg) => f(g(h(...args)))
  *
  * 值得注意的是，它用到了 reduceRight，因此执行顺序是从右到左
@@ -64,7 +64,7 @@ console.log(re1) // 15
 
 var re2 = arr.reduce(function(total, i) {
   return total + i
-}, 100) // 传入一个初始值
+}, 100) // <---------------传入一个初始值
 console.log(re2) // 115
 ```
 
@@ -76,7 +76,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import $$observable from 'symbol-observable'
 
 /**
- * 这是 Redux 的私有 action
+ * 这是 Redux 的私有 action 常量
  * 长得太丑了，你不要鸟就行了
  */
 export var ActionTypes = {
@@ -87,15 +87,15 @@ export var ActionTypes = {
  * @param  {函数}  reducer 不多解释了
  * @param  {对象}  preloadedState 主要用于前后端同构时的数据同步
  * @param  {函数}  enhancer 很牛逼，可以实现中间件、时间旅行，持久化等
- * （目前 Redux 中仅提供 appleMiddleware 这个 Store Enhancer）
+ * ※（目前 Redux 中仅提供 appleMiddleware 这个 Store Enhancer，记住 appleMiddleware 也是一个 enhancer 哦）※
  * @return {Store} 全局唯一的 store 实例
  */
 export default function createStore(reducer, preloadedState, enhancer) {
-  // 这里省略的代码，到本文的最后会慢慢讲述
+  // 这里省略的代码，到本文的最后再讲述（用于压轴你懂的）
   
   var currentReducer = reducer
-  var currentState = preloadedState // 这就是整个应用的 state
-  var currentListeners = [] // 用于存储订阅的回调函数，dispatch 后逐个执行
+  var currentState = preloadedState //     这就是整个应用的 state
+  var currentListeners = [] //             用于存储订阅的回调函数，dispatch 后逐个执行
   var nextListeners = currentListeners // 【悬念1：为什么需要两个 存放回调函数 的变量？】
   var isDispatching = false
 
@@ -112,7 +112,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
    * c 被跳过了！！！这就是躺枪。。。
    * 
    * 作为一个回调函数，最大的耻辱就是得不到执行
-   * 因此为了避免这个问题，本函数会在上述场景中把
+   * 因此为了避免这个问题，本函数（赐名 ensure 哥）会在上述场景中把
    * currentListeners 复制给 nextListeners
    *
    * 这样的话，dispatch 后，在逐个执行回调函数的过程中
@@ -141,10 +141,10 @@ export default function createStore(reducer, preloadedState, enhancer) {
    * 负责注册回调函数的老司机
    * 
    * 这里需要注意的就是，回调函数中如果需要获取 state
-   * 那每次获取都请使用 getState()，而不是开头用一个变量缓存住它
+   * 那每次获取都请使用 getState()，而不是开头用一个变量引用住它
    * 因为回调函数执行期间，有可能有连续几个 dispatch 让 state 改得物是人非
    * 而且别忘了，dispatch 之后，整个 state 是被完全替换掉的
-   * 你缓存的 state 引用指向的是老掉牙的 state 了！！！
+   * 你缓存的 state 引用指向的，可能是老掉牙的 state 了！！！
    *
    * @param  {函数} 想要订阅的回调函数
    * @return {函数} 取消订阅的函数
@@ -156,8 +156,8 @@ export default function createStore(reducer, preloadedState, enhancer) {
 
     var isSubscribed = true
 
-    ensureCanMutateNextListeners()
-    nextListeners.push(listener) // 新增订阅在 nextListeners 中操作
+    ensureCanMutateNextListeners() // 调用 ensure 哥保平安
+    nextListeners.push(listener)   // 新增订阅在 nextListeners 中操作
 
     // 返回一个取消订阅的函数
     return function unsubscribe() {
@@ -167,7 +167,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
 
       isSubscribed = false
 
-      ensureCanMutateNextListeners()
+      ensureCanMutateNextListeners() // 调用 ensure 哥保平安
       var index = nextListeners.indexOf(listener)
       nextListeners.splice(index, 1) // 取消订阅还是在 nextListeners 中操作
     }
@@ -211,16 +211,15 @@ export default function createStore(reducer, preloadedState, enhancer) {
       isDispatching = false
     }
 
-    // 令 currentListeners 等于 nextListeners
-    // （这就是上面 ensureCanMutateNextListeners 函数的判定条件，表示进入了循环执行回调函数期）
+    // 令 currentListeners 等于 nextListeners，表示正在逐个执行回调函数（这就是上面 ensure 哥的判定条件）
     var listeners = currentListeners = nextListeners
 
-    // 逐个触发回调函数。这里不保存数组长度是明智的，原因见【悬念1·解疑】
+    // 逐个触发回调函数。这里不缓存数组长度是明智的，原因见【悬念1·解疑】
     for (var i = 0; i < listeners.length; i++) {
       listeners[i]()
     }
 
-    return action // 为了方便链式调用，于是返回 action（下面会提到的，稍微记住就好了）
+    return action // 为了方便链式调用，dispatch 执行完毕后，返回 action（下文会提到的，稍微记住就好了）
   }
 
   /**
@@ -234,7 +233,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
       throw new Error('Expected the nextReducer to be a function.')
     }
 
-    currentReducer = nextReducer // 就是这么简单粗暴！
+    currentReducer = nextReducer //         就是这么简单粗暴！
     dispatch({ type: ActionTypes.INIT }) // 触发生成新的 state 树
   }
 
@@ -243,36 +242,9 @@ export default function createStore(reducer, preloadedState, enhancer) {
    * 如果您了解 RxJS 等响应式编程库，那可能会用到这个接口，否则请略过
    * @return {observable}
    */
-  function observable() {
-    var outerSubscribe = subscribe
-    return {
-      /**
-       * @param  {observer}
-       * @return {subscription}
-       */
-      subscribe(observer) {
-        if (typeof observer !== 'object') {
-          throw new TypeError('Expected the observer to be an object.')
-        }
+  function observable() {略}
 
-        function observeState() {
-          if (observer.next) {
-            observer.next(getState())
-          }
-        }
-
-        observeState()
-        var unsubscribe = outerSubscribe(observeState)
-        return { unsubscribe }
-      },
-
-      [$$observable]() {
-        return this
-      }
-    }
-  }
-
-  // store 生成后，这个 INIT action 将会被 dispatch，得到应用的初始状态
+  // store 生成后，这个 INIT action 会被 dispatch，生成应用的初始状态
   dispatch({ type: ActionTypes.INIT })
 
   return {
@@ -288,14 +260,14 @@ export default function createStore(reducer, preloadedState, enhancer) {
 
 【悬念2：什么是反转控制权？ · 解疑】  
 在同步场景下，`dispatch(action)` 的这个 `action` 中的数据是同步获取的，并没有控制权的切换问题  
-但异步场景下，则需要将 `dispatch` 传入到回调函数，待异步操作完成后，回调函数**自行**调用 `dispatch(action)`  
+但异步场景下，则需要将 `dispatch` 传入到回调函数。待异步操作完成后，回调函数**自行**调用 `dispatch(action)`  
 
-说白了：在异步 Action Creator 中调用 `dispatch` 就相当于反转控制权  
-您完全可以自己实现，也可以借助 [redux-thunk][redux-thunk] / [redux-promise][redux-promise] 实现  
-（它们的作用也仅仅就是把 `dispatch` 等传进异步 Action Creator 罢了）
+说白了：在异步 Action Creator 中**自行**调用 `dispatch` 就相当于反转控制权  
+您完全可以自己实现，也可以借助 [redux-thunk][redux-thunk] / [redux-promise][redux-promise] 等中间件统一实现  
+（它们的作用也仅仅就是把 `dispatch` 等传入异步 Action Creator 罢了）
 
 > 拓展阅读：阮老师的 [Thunk 函数的含义与用法][ryf-thunk]  
-> 联想：您不觉得 JavaScript 的回调函数就是反转控制权吗？
+> 题外话：您不觉得 JavaScript 的回调函数，就是反转控制权最普遍的体现吗？
 
 ## &sect; Redux API · [combineReducers(reducers)][combineReducers]
 ### ⊙ 应用场景
@@ -373,9 +345,9 @@ const rootReducer = combineReducers({
 })
 
 export default rootReducer
-```
 
-```
+-------------------------------------------------
+
 /* reducers/counterReducer.js */
 export default function counterReducer(counter = 0, action) { // 请留意传入的 state 仅仅是 state.counter
   switch (action.type) {
@@ -385,9 +357,9 @@ export default function counterReducer(counter = 0, action) { // 请留意传入
       return counter
   }
 }
-```
 
-```
+-------------------------------------------------
+
 /* reducers/todosReducers */
 export default function todosReducer(todos = [], action) { // 请留意传入的 state 仅仅是 state.todos
   switch (action.type) {
@@ -429,8 +401,8 @@ state
 
 ```
 目录结构如下
-reducers/ <-------------------- combineReducers (生成 rootReducer)
-   ├── index.js
+reducers/
+   ├── index.js <-------------- combineReducers (生成 rootReducer)
    ├── counterReducer.js
    ├── todoReducers/ <--------- combineReducers
            ├── index.js
@@ -450,9 +422,9 @@ const rootReducer = combineReducers({
 })
 
 export default rootReducer
-```
 
-```
+-------------------------------------------------
+
 /* reducers/todoReducers/index.js */
 import { combineReducers } from 'redux'
 import optTimeReducer from './optTimeReducer'
@@ -464,17 +436,17 @@ const todoReducers = combineReducers({
 })
 
 export default todoReducers
-```
 
-```
+-------------------------------------------------
+
 /* reducers/todosReducers/optTimeReducer.js */
 export default function optTimeReducer(optTime = [], action) {
   // 咦？这里怎么没有 switch-case 分支？谁说 reducer 就一定包含 switch-case 分支的？
   return action.type.includes('TODO') ? [ ...optTime, new Date() ] : optTime
 }
-```
 
-```
+-------------------------------------------------
+
 /* reducers/todosReducers/todoListReducer.js */
 export default function todoListReducer(todoList = [], action) {
   switch (action.type) {
@@ -500,7 +472,7 @@ rootReducer(state, action) —→∑     ↗ optTimeReducer(optTime, action) ---
 ```
 
 > 无论是 `dispatch` 哪个 `action`，都会流通**所有的** `reducer`  
-> 表面上看来，这样子很浪费性能，但 JavaScript 对于这种纯函数的调用是很高效率的，因此请尽管放心  
+> 表面上看来，这样子很浪费性能，但 JavaScript 对于这种**纯函数**的调用是很高效率的，因此请尽管放心  
 > 这也是为何 `reducer` 必须返回其对应的 `state` 的原因。否则整合状态树时，该 `reducer` 对应的键名就是 `undefined`
 
 ### ⊙ 源码分析
@@ -520,7 +492,7 @@ function combineReducers(reducers) {
 
   var finalReducerKeys = Object.keys(finalReducers)
 
-  // 返回一个 reducer
+  // 返回合成后的 reducer
   return function combination(state = {}, action) {
     var hasChanged = false
     var nextState = {}
@@ -529,7 +501,7 @@ function combineReducers(reducers) {
       var reducer = finalReducers[key]
       var previousStateForKey = state[key]
       var nextStateForKey = reducer(previousStateForKey, action) // 传入各子 reducer 中获取子 nextState
-      nextState[key] = nextStateForKey // 关键点：将对应的子 state 挂载到对应的键名
+      nextState[key] = nextStateForKey                           // 关键点：将对应的子 state 挂载到对应的键名
       hasChanged = hasChanged || nextStateForKey !== previousStateForKey
     }
     return hasChanged ? nextState : state
@@ -602,7 +574,7 @@ var actionsCreators = Redux.bindActionCreators(
 
 $('#btn').on('click', function() {
   var content = $('#todoInput').val()
-  actionCreators.addTodo(content) // 自动 dispatch
+  actionCreators.addTodo(content) // 它会自动 dispatch
 })
 </script>
 ```
@@ -616,10 +588,11 @@ $('#btn').on('click', function() {
 
 ### ⊙ Middleware
 说白了，Redux 引入中间件机制，其实就是为了在 `dispatch` 前后，**统一**“做爱做的事”。。。  
-诸如统一的日志记录、引入 thunk 统一处理异步 Action 等都属于中间件。下面是一个简单的打印动作前后 `state` 的中间件：
+诸如统一的日志记录、引入 thunk 统一处理异步 Action Creator 等都属于中间件  
+下面是一个简单的打印动作前后 `state` 的中间件：
 
 ```
-// 装逼写法
+/* 装逼写法 */
 const printStateMiddleware = ({ getState }) => next => action => {
   console.log('state before dispatch', getState())
   
@@ -629,16 +602,16 @@ const printStateMiddleware = ({ getState }) => next => action => {
 
   return returnValue
 }
-```
 
-```
-// 降低逼格写法
-function printStateMiddleware(middlewareAPI) { // 记为【锚点-1】，中间件可用的 API
+-------------------------------------------------
+
+/* 普通写法 */
+function printStateMiddleware(middlewareAPI) { // 记为【锚点-1】，中间件内可用的 API
   return function (dispatch) {                 // 记为【锚点-2】，传入原 store.dispatch 的引用
     return function (action) {
       console.log('state before dispatch', middlewareAPI.getState())
   
-      var returnValue = dispatch(action) // 还记得吗？dispatch 的返回值其实还是 action
+      var returnValue = dispatch(action) // 还记得吗，dispatch 的返回值其实还是 action
   
       console.log('state after dispatch', middlewareAPI.getState())
 
@@ -653,32 +626,33 @@ function printStateMiddleware(middlewareAPI) { // 记为【锚点-1】，中间�
 话不多说，直接上源码：
 
 ```
-import compose from './compose' // 还记得吗？这货的作用就是 compose(f, g, h)(action) => f(g(h(action)))
+import compose from './compose' // 还记得吗，这货的作用就是 compose(f, g, h)(action) => f(g(h(action)))
 
+/* 传入一坨中间件 */
 export default function applyMiddleware(...middlewares) {
 
-  /* 传入 Redux 的 API：createStore */
+  /* 传入 createStore */
   return function(createStore) {
   
     /* 返回一个函数，函数签名跟 createStore 一模一样，亦即返回的是一个增强版的 createStore */
     return function(reducer, preloadedState, enhancer) {
     
-      // 生成一个常规的 store，其包含 getState / dispatch / subscribe / replaceReducer 四个 API
+      // 生成一个 store，其包含 getState / dispatch / subscribe / replaceReducer 四个 API
       var store = createStore(reducer, preloadedState, enhancer)
       
       var dispatch = store.dispatch // 指向原 dispatch
       var chain = [] // 存储中间件的数组
   
-      // 提供给中间件的 API（都是 store 的 API）
+      // 提供给中间件的 API（其实都是 store 的 API）
       var middlewareAPI = {
         getState: store.getState,
         dispatch: (action) => dispatch(action)
       }
       
-      // 给中间件“装上” API，见上述【降低逼格写法】的【锚点-1】 
+      // 给中间件“装上” API，见上述【普通写法】的【锚点-1】 
       chain = middlewares.map(middleware => middleware(middlewareAPI))
       
-      // 串联各个中间件，为各个中间件传入原 store.dispatch，见上述【降低逼格写法】的【锚点-2】
+      // 串联各个中间件，为各个中间件传入原 store.dispatch，见上述【普通写法】的【锚点-2】
       dispatch = compose(...chain)(store.dispatch)
   
       return {
@@ -691,7 +665,7 @@ export default function applyMiddleware(...middlewares) {
 
 ```
 
-上面最终返回的还是 `store` 的那四个 API，但其中的 `dispatch` 函数的功能被增强了，这就是所谓 Store Enhancer 的作用
+上面最终返回的还是 `store` 的那四个 API，但其中的 `dispatch` 函数的功能被增强了，这就是所谓的 Store Enhancer
 
 ### ⊙ 综合应用 ( [在线演示][jsbin] )
 ```
@@ -757,7 +731,10 @@ var store = Redux.createStore(
 )
 ```
 
-如果有多个中间件以及多个增强器，则可以这样写（请留意序号顺序）：
+如果有多个中间件以及多个增强器，还可以这样写（请留意序号顺序）：
+
+> 重温一下 `createStore` 完整的函数签名：`function createStore(reducer, preloadedState, enhancer)`
+
 ```
 /** 本代码块记为 code-11 **/
 import { createStore, applyMiddleware, compose } from 'redux'
@@ -792,7 +769,7 @@ if (typeof enhancer !== 'undefined') {
   if (typeof enhancer !== 'function') {
     throw new Error('Expected the enhancer to be a function.')
   }
-  // 存在 enhancer 就立即执行，生成一个增强版的 createStore 并返回 <--- 记为【锚点 12-1】
+  // 存在 enhancer 就立即执行，返回增强版的 createStore <--------- 记为【锚点 12-1】
   return enhancer(createStore)(reducer, preloadedState)
 }
 
@@ -802,7 +779,7 @@ if (typeof reducer !== 'function') {
 ```
 
 如果像 `code-11` 那样有多个 `enhancer`，则 `code-12 【锚点 12-1】` 中的代码会执行多次  
-生成最终超级增强版的 `store`。下面继续奉上 `code-11` 的执行顺序示意图：
+生成最终的超级增强版 `store`。下面继续奉上 `code-11` 的执行顺序示意图：
 
 ```
 原 createStore
@@ -821,13 +798,13 @@ createStore 增强版 1 + 2 + 3
     │
     │ return appleMiddleware(middleware1, middleware2, middleware3)
     ↓
-最终生成的 store
+生成最终的 store
 ```
 
 
 ***
 
-## &sect; 最后的总结
+## &sect; 总结
 Redux 有五个 API，分别是：
 
 * `createStore(reducer, [initialState])`
@@ -843,7 +820,10 @@ Redux 有五个 API，分别是：
 * `subscribe(listener)`
 * `replaceReducer(nextReducer)`
 
-至此，本教程告一段落。最后奉上 React + Redux + React Router 的示例：[react-demo][react-demo]
+至此，本教程告一段落。若您觉得我写得还行，不妨点个 [star][this-github]  
+最后奉上 React + Redux + React Router 的示例：[react-demo][react-demo]
+
+> 拓展阅读：[中间件的洋葱模型][middleware-onion-model]
 
 [simple-tutorial]: https://github.com/kenberkeley/react-simple-tutorial
 [babel-repl]: http://babeljs.io/repl/
@@ -858,4 +838,6 @@ Redux 有五个 API，分别是：
 [applyMiddleware]: http://cn.redux.js.org/docs/api/applyMiddleware.html
 [redux-middleware]: http://cn.redux.js.org/docs/advanced/Middleware.html
 [jsbin]: http://jsbin.com/luhira/edit?html,console
+[this-github]: https://github.com/kenberkeley/redux-simple-tutorial
 [react-demo]: https://github.com/kenberkeley/react-demo
+[middleware-onion-model]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/middleware-onion-model.md
