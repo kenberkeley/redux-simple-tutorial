@@ -1,18 +1,5 @@
 # Redux 进阶教程
-
-[simple-tutorial]: https://github.com/kenberkeley/react-simple-tutorial
-[babel-repl]: http://babeljs.io/repl/
-[redux-src]: https://github.com/reactjs/redux/tree/master/src
-[deep-in-redux]: http://zhenhua-lee.github.io/react/redux.html
-[redux-thunk]: https://github.com/gaearon/redux-thunk
-[redux-promise]: https://github.com/acdlite/redux-promise
-[ryf-thunk]: http://www.ruanyifeng.com/blog/2015/05/thunk.html
-[compose]: http://cn.redux.js.org/docs/api/compose.html
-[createStore]: http://cn.redux.js.org/docs/api/createStore.html
-[combineReducers]: http://cn.redux.js.org/docs/api/combineReducers.html
-[bindActionCreators]: http://cn.redux.js.org/docs/api/bindActionCreators.html
-[applyMiddleware]: http://cn.redux.js.org/docs/api/applyMiddleware.html
-[redux-middleware]: http://cn.redux.js.org/docs/advanced/Middleware.html
+> 原文链接：https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
 
 > ### 写在前面  
 > 相信您已经看过 [Redux 简明教程][simple-tutorial]，本教程是简明教程的实战化版本，伴随源码分析  
@@ -233,7 +220,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
       listeners[i]()
     }
 
-    return action
+    return action // 作者为了方便链式调用，于是返回 action（下面会提到的）
   }
 
   /**
@@ -617,46 +604,65 @@ $('#btn').on('click', function() {
 
 > 综上，这个 API 没啥卵用，尤其是异步场景下，基本用不上
 
-## Redux API · [applyMiddleware(...middlewares)][applyMiddleware]
+## &sect; Redux API · [applyMiddleware(...middlewares)][applyMiddleware]
 > Redux 中文文档 [高级 · Middleware][redux-middleware] 有提到中间件的演化由来
 
 首先要理解何谓 `Middleware`，何谓 `Enhancer`
 
 ### ⊙ Middleware
-说白了，中间件其实就是**统一处理**与业务无关的东西，诸如日志记录、引入 thunk 处理异步 Action 等  
-下面就是一个简单的日志记录中间件：
+说白了，中间件其实就是**统一处理**与业务无关的东西，并且不更改原有的 `store` API  
+诸如日志记录、引入 thunk 处理异步 Action 等都属于中间件。下面是一个简单的打印动作前后 `state` 的中间件：
 
 ```
-function logger(storeAPI) {
-  return function (dispatch) {
-    return function (action) {
-      console.log('state before dispatch', storeAPI.getState())
+// 装逼写法
+const printStateMiddleware = ({ getState }) => next => action => {
+  console.log('state before dispatch', getState())
   
-      let returnValue = dispatch(action)
-  
-      console.log('state after dispatch', storeAPI.getState())
+  let returnValue = next(action)
 
-      return returnValue
+  console.log('state after dispatch', getState())
+
+  return returnValue
+}
+```
+
+```
+// 降低逼格写法
+function printStateMiddleware(middlewareAPI) { // 记为 锚点-1，中间件可用的 API
+  return function (dispatch) {                 // 记为 锚点-2，传入原 store.dispatch 的引用
+    return function (action) {
+      console.log('state before dispatch', middlewareAPI.getState())
+  
+      var returnValue = dispatch(action) // dispatch 的返回值其实还是 action
+  
+      console.log('state after dispatch', middlewareAPI.getState())
+
+      return returnValue // 作为参数 action，继续传给下一个中间件
     }
   }
 }
 ```
 
 ### ⊙ Store Enhancer
-说白了，Store 增强器就是对 `store` 的功能进行增强。举个例子，`applyMiddleware` 这个 API 实际上就是一个 Store 增强器  
+说白了，Store 增强器就是对 `store` 的功能进行增强。例如，Redux 的 API `applyMiddleware` 实际上就是一个 Store 增强器  
 话不多说，直接上源码：
 
 ```
-import compose from './compose' // 还记得这货的作用吗？
+import compose from './compose' // 还记得吗？这货的作用就是 compose(f, g, h)(action) => f(g(h(action)))
 
 export default function applyMiddleware(...middlewares) {
-  return function(createStore) { // <---------------------- 传入 Redux 的 API：createStore
-    return function(reducer, preloadedState, enhancer) { // 返回一个函数，函数签名跟 createStore 一模一样
-      // 生成 store，其包含 getState / dispatch / subscribe / replaceReducer 四个 API
+
+  /* 传入 Redux 的 API：createStore */
+  return function(createStore) {
+  
+    /* 返回一个函数，函数签名跟 createStore 一模一样，亦即返回的是一个增强版的 createStore */
+    return function(reducer, preloadedState, enhancer) {
+    
+      // 生成一个常规的 store，其包含 getState / dispatch / subscribe / replaceReducer 四个 API
       var store = createStore(reducer, preloadedState, enhancer)
       
       var dispatch = store.dispatch // 指向原 dispatch
-      var chain = []
+      var chain = [] // 存储中间件的数组
   
       // 提供给中间件的 API（都是 store 的 API）
       var middlewareAPI = {
@@ -664,18 +670,92 @@ export default function applyMiddleware(...middlewares) {
         dispatch: (action) => dispatch(action)
       }
       
-      // 由于涉及到 middleware 的写法，因此您只需要知道下面是为中间件加上 API 
+      // 给中间件“装上” API，见上述【降低逼格写法】的 锚点-1 
       chain = middlewares.map(middleware => middleware(middlewareAPI))
       
-      // 由于涉及到 middleware 的写法，因此您只需要
+      // 串联各个中间件，为各个中间件传入原 store.dispatch，见上述【降低逼格写法】的 锚点-2
       dispatch = compose(...chain)(store.dispatch)
   
       return {
         ...store, // store 的 API 中保留 getState / subsribe / replaceReducer
-        dispatch  // dispatch 被这个全新的覆盖了
+        dispatch  // 新 dispatch 覆盖原 dispatch，之后调用 dispatch 就会触发 chain 内的中间件链式串联执行
       }
     }
   }
 }
 
 ```
+
+上面最终返回的还是 `store` 的那四个 API，但其中的 `dispatch` 函数的功能被增强了，这就是所谓 Store Enhancer 的作用
+
+### ⊙ 综合应用 ( [在线演示][jsbin] )
+```
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="//cdn.bootcss.com/redux/3.5.2/redux.min.js"></script>
+</head>
+<body>
+<script>
+/** Action Creators */
+function inc() {
+  return { type: 'INCREMENT' };
+}
+function dec() {
+  return { type: 'DECREMENT' };
+}
+
+function reducer(state, action) {
+  state = state || { counter: 0 };
+
+  switch (action.type) {
+    case 'INCREMENT':
+      return { counter: state.counter + 1 };
+    case 'DECREMENT':
+      return { counter: state.counter - 1 };
+    default:
+      return state;
+  }
+}
+
+function printStateMiddleware(middlewareAPI) {
+  return function (dispatch) {
+    return function (action) {
+      console.log('dispatch 前：', middlewareAPI.getState());
+      var returnValue = dispatch(action);
+      console.log('dispatch 后：', middlewareAPI.getState());
+      return returnValue;
+    };
+  };
+}
+  
+var enhancedCreateStore = Redux.applyMiddleware(printStateMiddleware)(Redux.createStore);
+var store = enhancedCreateStore(reducer);
+
+store.dispatch(inc());
+store.dispatch(inc());
+store.dispatch(dec());
+</script>
+</body>
+</html>
+```
+
+***
+
+## [&sect; 最后：React + Redux + React Router 实例][react-demo]
+
+[simple-tutorial]: https://github.com/kenberkeley/react-simple-tutorial
+[babel-repl]: http://babeljs.io/repl/
+[redux-src]: https://github.com/reactjs/redux/tree/master/src
+[deep-in-redux]: http://zhenhua-lee.github.io/react/redux.html
+[redux-thunk]: https://github.com/gaearon/redux-thunk
+[redux-promise]: https://github.com/acdlite/redux-promise
+[ryf-thunk]: http://www.ruanyifeng.com/blog/2015/05/thunk.html
+[compose]: http://cn.redux.js.org/docs/api/compose.html
+[createStore]: http://cn.redux.js.org/docs/api/createStore.html
+[combineReducers]: http://cn.redux.js.org/docs/api/combineReducers.html
+[bindActionCreators]: http://cn.redux.js.org/docs/api/bindActionCreators.html
+[applyMiddleware]: http://cn.redux.js.org/docs/api/applyMiddleware.html
+[redux-middleware]: http://cn.redux.js.org/docs/advanced/Middleware.html
+[jsbin]: http://jsbin.com/luhira/edit?html,console
+[react-demo]: https://github.com/kenberkeley/react-demo
