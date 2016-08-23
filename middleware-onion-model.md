@@ -6,7 +6,7 @@
 
 ## &sect; Express 的中间件
 
-```
+```js
 /** app.js **/
 var express = require('express')
 var app = express()
@@ -81,7 +81,7 @@ B middleware1 结束
 
 ## &sect; Redux 的中间件[（在线演示）](http://jsbin.com/pazica/edit?html,console)
 
-```
+```html
 <!DOCTYPE html>
 <html>
 <head>

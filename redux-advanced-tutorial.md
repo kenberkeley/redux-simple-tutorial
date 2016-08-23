@@ -26,7 +26,7 @@
 
 ### ⊙ 源码分析
 
-```
+```js
 /**
  * 看起来逼格很高，实际运用其实是这样子的：
  * compose(f, g, h)(...arg) => f(g(h(...args)))
@@ -54,7 +54,7 @@ export default function compose(...funcs) {
 
 这里的关键点在于，`reduceRight` 可传入初始值。由于 `reduce / reduceRight` 仅仅是方向的不同，因此下面用 `reduce` 说明即可：
 
-```
+```js
 var arr = [1, 2, 3, 4, 5]
 
 var re1 = arr.reduce(function(total, i) {
@@ -71,7 +71,7 @@ console.log(re2) // 115
 ## &sect; Redux API · [createStore(reducer, [initialState])][createStore]
 ### ⊙ 源码分析
 
-```
+```js
 import isPlainObject from 'lodash/isPlainObject'
 import $$observable from 'symbol-observable'
 
@@ -332,7 +332,7 @@ reducers/
    ├── todosReducer.js
 ```
 
-```
+```js
 /** 本代码块记为 code-9 **/
 /* reducers/index.js */
 import { combineReducers } from 'redux'
@@ -410,7 +410,7 @@ reducers/
            ├── todoListReducer.js
 ```
 
-```
+```js
 /* reducers/index.js */
 import { combineReducers } from 'redux'
 import counterReducer from './counterReducer'
@@ -478,7 +478,7 @@ rootReducer(state, action) —→∑     ↗ optTimeReducer(optTime, action) ---
 ### ⊙ 源码分析
 > 仅截取关键部分，毕竟有很大一部分都是类型检测警告
 
-```
+```js
 function combineReducers(reducers) {
   var reducerKeys = Object.keys(reducers)
   var finalReducers = {}
@@ -518,7 +518,7 @@ function combineReducers(reducers) {
 
 ### ⊙ 源码分析
 
-```
+```js
 /* 为 Action Creator 加装上自动 dispatch 技能 */
 function bindActionCreator(actionCreator, dispatch) {
   return (...args) => dispatch(actionCreator(...args))
@@ -591,7 +591,7 @@ $('#btn').on('click', function() {
 诸如统一的日志记录、引入 thunk 统一处理异步 Action Creator 等都属于中间件  
 下面是一个简单的打印动作前后 `state` 的中间件：
 
-```
+```js
 /* 装逼写法 */
 const printStateMiddleware = ({ getState }) => next => action => {
   console.log('state before dispatch', getState())
@@ -625,7 +625,7 @@ function printStateMiddleware(middlewareAPI) { // 记为【锚点-1】，中间�
 说白了，Store 增强器就是对生成的 `store` API 进行改造，这是它与中间件最大的区别（中间件不修改 `store` 的 API）  
 而改造 `store` 的 API 就要从它的缔造者 `createStore` 入手。例如，Redux 的 API `applyMiddleware` 就是一个 Store 增强器：
 
-```
+```js
 import compose from './compose' // 这货的作用其实就是 compose(f, g, h)(action) => f(g(h(action)))
 
 /* 传入一坨中间件 */
@@ -668,7 +668,7 @@ export default function applyMiddleware(...middlewares) {
 最终返回的虽然还是 `store` 的那四个 API，但其中的 `dispatch` 函数的功能被增强了，这就是所谓的 Store Enhancer
 
 ### ⊙ 综合应用 ( [在线演示][jsbin] )
-```
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -723,7 +723,7 @@ store.dispatch(dec());
 
 实际上，上面生成 `store` 的代码还可以更加优雅：
 
-```
+```js
 /** 本代码块记为 code-10 **/
 var store = Redux.createStore(
   reducer,
@@ -735,7 +735,7 @@ var store = Redux.createStore(
 
 > 重温一下 `createStore` 完整的函数签名：`function createStore(reducer, preloadedState, enhancer)`
 
-```
+```js
 /** 本代码块记为 code-11 **/
 import { createStore, applyMiddleware, compose } from 'redux'
 
@@ -757,7 +757,7 @@ const store = createStore(
 
 在 `createStore` 的源码分析的开头部分，我省略了一些代码，现在奉上关键部分：
 
-```
+```js
 /** 本代码块记为 code-12 **/
 if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
   // 这里就是上面 code-10 的情况，只传入 reducer 和 Store Enhancer 这两个参数
