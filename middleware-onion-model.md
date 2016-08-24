@@ -2,6 +2,8 @@
 
 [redux-advanced-tutorial]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
 
+> 原文链接（保持最新版本）：https://github.com/kenberkeley/redux-simple-tutorial/blob/master/middleware-onion-model.md
+> 
 > 本文是 [Redux 进阶教程][redux-advanced-tutorial] 的拓展阅读
 
 ## &sect; Express 的中间件
@@ -64,8 +66,8 @@ B middleware1 结束
             |    |    |  middleware3    |    |    |
             |    |    |                 |    |    |
           next next next  ———————————   |    |    |
-请 ————————————————————> |  handler  | ----------->
-求 <———————————————————— |     G     |  |    |    |
+请求 ——————————————————> |  handler  | — 收尾工作->|
+响应 <—————————————————  |     G     |  |    |    |
             | A  | C  | E ——————————— F |  D |  B |
             |    |    |                 |    |    |
             |    |    -------------------    |    |
@@ -74,9 +76,9 @@ B middleware1 结束
 
 
 顺序 A -> C -> E -> G -> F -> D -> B
-    \---------------/
-            ↓
-        请求响应完毕
+    \---------------/   \----------/
+            ↓                ↓
+        请求响应完毕        收尾工作
 ```
 
 ## &sect; Redux 的中间件[（在线演示）](http://jsbin.com/pazica/edit?html,console)
@@ -164,8 +166,8 @@ B middleware1 结束
             |    |    |  middleware3    |    |    |
             |    |    |                 |    |    |
           next next next  ———————————   |    |    |
-dispatch ——————————————> |  reducer  | ----------->
-            |    |    |  |     G     |  |    |    |
+dispatch  —————————————> |  reducer  | — 收尾工作->|
+nextState <————————————— |     G     |  |    |    |
             | A  | C  | E ——————————— F |  D |  B |
             |    |    |                 |    |    |
             |    |    -------------------    |    |
@@ -174,8 +176,10 @@ dispatch ——————————————> |  reducer  | ----------->
 
 
 顺序 A -> C -> E -> G -> F -> D -> B
+    \---------------/   \----------/
+            ↓                ↓
+      更新 state 完毕      收尾工作
 ```
 
 ## &sect; 总结
-顺序：层层进入，层层冒出  
-就像一颗子弹穿过洋葱的体验
+Redux 与 Express 的中间件执行流程一致：层层进入，层层冒出，就像从中间穿过洋葱般的体验

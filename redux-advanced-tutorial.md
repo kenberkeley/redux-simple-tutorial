@@ -1,9 +1,9 @@
 # Redux 进阶教程
-> 原文链接：https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
+> 原文链接（保持最新版本）：https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
 
 > ### 写在前面  
 > 相信您已经看过 [Redux 简明教程][simple-tutorial]，本教程是简明教程的实战化版本，伴随源码分析  
-> Redux 用的是 ES6 编写，看到有疑惑的地方的，可以复制粘贴到[这里][babel-repl]在线编译查看
+> Redux 用的是 ES6 编写，看到有疑惑的地方的，可以复制粘贴到[这里][babel-repl]在线编译 ES5
 
 ## &sect; Redux API 总览
 在 Redux 的[源码目录][redux-src] `src/`，我们可以看到如下文件结构：
@@ -66,6 +66,59 @@ var re2 = arr.reduce(function(total, i) {
   return total + i
 }, 100) // <---------------传入一个初始值
 console.log(re2) // 115
+```
+
+下面是 `compose` 的实例（[在线演示](http://jsbin.com/gavomes/edit?html,console)）：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="//cdn.bootcss.com/redux/3.5.2/redux.min.js"></script>
+</head>
+<body>
+<script>
+function func1(num) {
+  console.log('func1 获得参数 ' + num);
+  return num + 1;
+}
+
+function func2(num) {
+  console.log('func2 获得参数 ' + num);
+  return num + 2;
+}
+  
+function func3(num) {
+  console.log('func3 获得参数 ' + num);
+  return num + 3;
+}
+
+// 有点难看（如果函数名再长一点，那屏幕就不够宽了）
+var re1 = func3(func2(func1(0)));
+console.log('re1：' + re1);
+
+console.log('===============');
+
+// 很优雅
+var re2 = Redux.compose(func3, func2, func1)(0);
+console.log('re2：' + re2);
+</script>
+</body>
+</html>
+```
+
+控制台打印：
+
+```
+func1 获得参数 0
+func2 获得参数 1
+func3 获得参数 3
+re1：6
+===============
+func1 获得参数 0
+func2 获得参数 1
+func3 获得参数 3
+re2：6
 ```
 
 ## &sect; Redux API · [createStore(reducer, [initialState])][createStore]
@@ -144,7 +197,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
    * 那每次获取都请使用 getState()，而不是开头用一个变量缓存住它
    * 因为回调函数执行期间，有可能有连续几个 dispatch 让 state 改得物是人非
    * 而且别忘了，dispatch 之后，整个 state 是被完全替换掉的
-   * 你缓存的 state 指向的可能是老掉牙的 state 了！！！
+   * 你缓存的 state 指向的可能已经是老掉牙的 state 了！！！
    *
    * @param  {函数} 想要订阅的回调函数
    * @return {函数} 取消订阅的函数
@@ -340,7 +393,7 @@ import counterReducer from './counterReducer'
 import todosReducer from './todosReducer'
 
 const rootReducer = combineReducers({
-  counter: counterReducer,
+  counter: counterReducer, // <-------- 键名就是该 reducer 对应管理的 state
   todos: todosReducer
 })
 
@@ -349,7 +402,7 @@ export default rootReducer
 -------------------------------------------------
 
 /* reducers/counterReducer.js */
-export default function counterReducer(counter = 0, action) { // 请留意传入的 state 仅仅是 state.counter
+export default function counterReducer(counter = 0, action) { // 传入的 state 其实是 state.counter
   switch (action.type) {
     case 'INCREMENT':
       return counter + 1 // counter 是值传递，因此可以直接返回一个值
@@ -361,7 +414,7 @@ export default function counterReducer(counter = 0, action) { // 请留意传入
 -------------------------------------------------
 
 /* reducers/todosReducers */
-export default function todosReducer(todos = [], action) { // 请留意传入的 state 仅仅是 state.todos
+export default function todosReducer(todos = [], action) { // 传入的 state 其实是 state.todos
   switch (action.type) {
     case 'ADD_TODO':
       return [ ...todos, action.payload ]
@@ -458,7 +511,7 @@ export default function todoListReducer(todoList = [], action) {
 }
 ```
   
-无论您的应用状态树有多么的复杂，都可以通过层层分支，分而治之地管理对应部分的 `state`：
+无论您的应用状态树有多么的复杂，都可以通过逐层下分地管理对应部分的 `state`：
 
 ```
                                  counterReducer(counter, action) -------------------- counter
@@ -468,8 +521,10 @@ rootReducer(state, action) —→∑     ↗ optTimeReducer(optTime, action) ---
                                    ↘ todoListReducer(todoList,action) ----- todoList ↗
 
 
-注：左侧表示 dispatch 分发流（∑ 表示 combineReducers），右侧表示各实体 reducer 的返回值，最后汇总整合成 nextState 树
+注：左侧表示 dispatch 分发流，∑ 表示 combineReducers；右侧表示各实体 reducer 的返回值，最后汇总整合成 nextState
 ```
+
+看了上图，您应该能直观感受到为何取名为 `reducer` 了吧？把 `state` 分而治之，极大减轻开发与维护的难度
 
 > 无论是 `dispatch` 哪个 `action`，都会流通**所有的** `reducer`  
 > 表面上看来，这样子很浪费性能，但 JavaScript 对于这种**纯函数**的调用是很高效率的，因此请尽管放心  
@@ -501,7 +556,7 @@ function combineReducers(reducers) {
       var reducer = finalReducers[key]
       var previousStateForKey = state[key]                       // 获取当前子 state
       var nextStateForKey = reducer(previousStateForKey, action) // 执行各子 reducer 中获取子 nextState
-      nextState[key] = nextStateForKey                           // 将对应的子 state 挂载到对应的键名
+      nextState[key] = nextStateForKey                           // 将对应的子 nextState 挂载到对应的键名
       hasChanged = hasChanged || nextStateForKey !== previousStateForKey
     }
     return hasChanged ? nextState : state
@@ -607,7 +662,7 @@ const printStateMiddleware = ({ getState }) => next => action => {
 
 /* 降低逼格写法 */
 function printStateMiddleware(middlewareAPI) { // 记为【锚点-1】，中间件内可用的 API
-  return function (dispatch) {                 // 记为【锚点-2】，传入原 store.dispatch 的引用
+  return function (dispatch) {                 // 记为【锚点-2】，传入原 dispatch 的引用
     return function (action) {
       console.log('state before dispatch', middlewareAPI.getState())
   
@@ -721,7 +776,7 @@ store.dispatch(dec());
 
 ***
 
-实际上，上面生成 `store` 的代码还可以更加优雅：
+实际上，上面生成 `store` 的代码可以更加优雅：
 
 ```js
 /** 本代码块记为 code-10 **/
@@ -741,9 +796,9 @@ import { createStore, applyMiddleware, compose } from 'redux'
 
 const store = createStore(
   reducer,
-  initialState, // <-------- 可选，前后端同构的数据同步
-  compose( // <------------- 还记得吗？compose 是从右到左的哦！
-    applyMiddleware( // <--- 还记得吗？这货也是 Store Enhancer 哦！
+  initialState, // <------- 可选，前后端同构的数据同步
+  compose( // <------------ 还记得吗？compose 是从右到左的哦！
+    applyMiddleware( // <-- 这货也是 Store Enhancer 哦！但这是关乎中间件的增强器，必须置于 compose 执行链的最后
       middleware1,
       middleware2,
       middleware3
@@ -755,7 +810,7 @@ const store = createStore(
 )
 ```
 
-在 `createStore` 的源码分析的开头部分，我省略了一些代码，现在奉上关键部分：
+为什么会支持那么多种写法呢？在 `createStore` 的源码分析的开头部分，我省略了一些代码，现在奉上该压轴部分：
 
 ```js
 /** 本代码块记为 code-12 **/
@@ -776,27 +831,29 @@ if (typeof enhancer !== 'undefined') {
 if (typeof reducer !== 'function') {
   throw new Error('Expected the reducer to be a function.')
 }
+
+// 除 compose 外，createStore 竟然也在此为我们提供了书写的便利与自由度，实在是太体贴了
 ```
 
 如果像 `code-11` 那样有多个 `enhancer`，则 `code-12 【锚点 12-1】` 中的代码会执行多次  
-生成最终的超级增强版 `store`。下面继续奉上 `code-11` 的执行顺序示意图：
+生成最终的超级增强版 `store`。下面继续奉上 `code-11` 中 `compose` 内部的执行顺序示意图：
 
 ```
-原 createStore
+(原 createStore)
     │
-    │ return enhancer1(createStore)(reducer, preloadedState)
+    │ return enhancer1(createStore)(reducer, preloadedState, enhancer2)
     ↓
-createStore 增强版 1
+(createStore 增强版 1)
     │
-    │ return enhancer2(createStore)(reducer, preloadedState)
+    │ return enhancer2(createStore1)(reducer, preloadedState, enhancer3)
     ↓
-createStore 增强版 1 + 2
+(createStore 增强版 1+2)
     │
-    │ return enhancer3(createStore)(reducer, preloadedState)
+    │ return enhancer3(createStore1+2)(reducer, preloadedState, applyMiddleware(m1,m2,m3))
     ↓
-createStore 增强版 1 + 2 + 3
+(createStore 增强版 1+2+3)
     │
-    │ return appleMiddleware(middleware1, middleware2, middleware3)
+    │ return appleMiddleware(m1,m2,m3)(createStore1+2+3)(reducer)
     ↓
 生成最终的 store
 ```
@@ -820,8 +877,11 @@ Redux 有五个 API，分别是：
 * `subscribe(listener)`
 * `replaceReducer(nextReducer)`
 
-至此，本教程告一段落。若您觉得我写得还行，不妨点个 [star][this-github]  
-最后奉上 React + Redux + React Router 的示例：[react-demo][react-demo]
+至此，如果您已经理解上述 API 的作用机理，以及中间件与增强器的概念/区别，本人将不胜荣幸  
+如您对本教程有任何意见或改进的建议，欢迎 [issue][this-issue]，我会尽快予您答复  
+若您觉得我写得还行，不妨点个 [star][this-github] 算是对我的赞赏
+
+最后奉上 React + Redux + React Router 的高规格实例：[react-demo][react-demo]
 
 > 拓展阅读：[中间件的洋葱模型][middleware-onion-model]
 
@@ -838,6 +898,7 @@ Redux 有五个 API，分别是：
 [applyMiddleware]: http://cn.redux.js.org/docs/api/applyMiddleware.html
 [redux-middleware]: http://cn.redux.js.org/docs/advanced/Middleware.html
 [jsbin]: http://jsbin.com/luhira/edit?html,console
+[this-issue]: https://github.com/kenberkeley/redux-simple-tutorial/issues
 [this-github]: https://github.com/kenberkeley/redux-simple-tutorial
 [react-demo]: https://github.com/kenberkeley/react-demo
 [middleware-onion-model]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/middleware-onion-model.md

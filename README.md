@@ -1,5 +1,5 @@
 # Redux 简明教程
-> 原文链接：https://github.com/kenberkeley/redux-simple-tutorial
+> 原文链接（保持最新版本）：https://github.com/kenberkeley/redux-simple-tutorial
 
 > ### 写在前面  
 > 学习一样新技术，难免会有些许的抵触感。尤其是遇到有难度的坎，觉得很难跨过去  
@@ -246,7 +246,7 @@ const store = createStore(reducer, initialState) // store 是靠传入 reducer �
 刨根问底，`action` 是谁生成的呢？
 
 ### ⊙ Action Creator
-> Action Creators 可以是同步的，也可以是异步的
+> Action Creator 可以是同步的，也可以是异步的
 
 顾名思义，Action Creator 是 `action` 的创造者，本质上就是一个**函数**，返回值是一个 `action`（**对象**）  
 例如下面就是一个 “新增一个待办事项” 的 Action Creator：
@@ -307,7 +307,7 @@ Redux 会明确知道是提取 `action.payload`，并且是对应写入到 `stat
 又是谁负责“写入”的呢？悬念即将揭晓...
 
 ## &sect; Reducer
-> Reducers 必须是同步的纯函数  
+> Reducer 必须是同步的纯函数  
 
 用户每次 `dispatch(action)` 后，都会触发 `reducer`  的执行  
 `reducer` 的实质是一个**函数**，根据 `action.type` 来**更新** `state` 并返回 `nextState`  
@@ -353,7 +353,7 @@ function reducer(state, action) {
 * `action` 本质上是一个包含 `type` 属性的普通**对象**，由 Action Creator (**函数**) 产生
 * 改变 `state` 必须 `dispatch` 一个 `action`
 * `reducer` 本质上是根据 `action.type` 来更新 `state` 并返回 `nextState` 的**函数**
-* `reducer` 不能返回空值（即 `nextState` 为 `undefined`），否则 `state` 将是 `undefined`
+* `reducer` 必须返回值，否则 `nextState` 即为 `undefined`
 * 实际上，**`state` 就是所有 `reducer` 返回值的汇总**（本教程只有一个 `reducer`，主要是应用场景比较简单）
 
 > Action Creator => `action` => `store.dispatch(action)` => `reducer(state, action)` => ~~`原 state`~~ `state = nextState`
@@ -368,7 +368,7 @@ Redux | 传统后端 MVC
 `reducer` | 路由 + 控制器（handler）
 `reducer` 中的 `switch-case` 分支 | 路由，根据 `action.type` 路由到对应的控制器
 `reducer` 内部对 `state` 的处理 | 控制器对数据库进行增删改操作
-`reducer` 返回 `nextState` 给 `store` | 将修改后的记录写回数据库
+`reducer` 返回 `nextState` | 将修改后的记录写回数据库
 
 ## &sect; 最简单的例子 ( [在线演示][jsbin] )
 
