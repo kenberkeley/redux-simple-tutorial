@@ -758,7 +758,7 @@ function printStateMiddleware(middlewareAPI) {
     return function (action) {
       console.log('dispatch 前：', middlewareAPI.getState());
       var returnValue = dispatch(action);
-      console.log('dispatch 后：', middlewareAPI.getState());
+      console.log('dispatch 后：', middlewareAPI.getState(), '\n');
       return returnValue;
     };
   };
@@ -780,8 +780,10 @@ store.dispatch(dec());
 ```
 dispatch 前：{ counter: 0 }
 dispatch 后：{ counter: 1 }
+
 dispatch 前：{ counter: 1 }
 dispatch 后：{ counter: 2 }
+
 dispatch 前：{ counter: 2 }
 dispatch 后：{ counter: 1 }
 ```
