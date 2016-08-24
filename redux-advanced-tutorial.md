@@ -1,5 +1,5 @@
 # Redux 进阶教程
-> 原文链接（保持最新版本）：https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
+> 原文（保持更新）：https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
 
 > ### 写在前面  
 > 相信您已经看过 [Redux 简明教程][simple-tutorial]，本教程是简明教程的实战化版本，伴随源码分析  
@@ -52,9 +52,10 @@ export default function compose(...funcs) {
 }
 ```
 
-这里的关键点在于，`reduceRight` 可传入初始值。由于 `reduce / reduceRight` 仅仅是方向的不同，因此下面用 `reduce` 说明即可：
+这里的关键点在于，`reduceRight` 可传入初始值：
 
 ```js
+// 由于 reduce / reduceRight 仅仅是方向的不同，因此下面用 reduce 说明即可
 var arr = [1, 2, 3, 4, 5]
 
 var re1 = arr.reduce(function(total, i) {
@@ -140,7 +141,7 @@ export var ActionTypes = {
  * @param  {函数}  reducer 不多解释了
  * @param  {对象}  preloadedState 主要用于前后端同构时的数据同步
  * @param  {函数}  enhancer 很牛逼，可以实现中间件、时间旅行，持久化等
- * ※（目前 Redux 中仅提供 appleMiddleware 这个 Store Enhancer。记住 appleMiddleware 也是一个 enhancer 哦）※
+ * ※ Redux 仅提供 appleMiddleware 这个 Store Enhancer ※
  * @return {Store}
  */
 export default function createStore(reducer, preloadedState, enhancer) {
@@ -796,7 +797,7 @@ import { createStore, applyMiddleware, compose } from 'redux'
 
 const store = createStore(
   reducer,
-  initialState, // <------- 可选，前后端同构的数据同步
+  preloadedState, // <----- 可选，前后端同构的数据同步
   compose( // <------------ 还记得吗？compose 是从右到左的哦！
     applyMiddleware( // <-- 这货也是 Store Enhancer 哦！但这是关乎中间件的增强器，必须置于 compose 执行链的最后
       middleware1,
@@ -839,23 +840,27 @@ if (typeof reducer !== 'function') {
 生成最终的超级增强版 `store`。下面继续奉上 `code-11` 中 `compose` 内部的执行顺序示意图：
 
 ```
-(原 createStore)
-    │
-    │ return enhancer1(createStore)(reducer, preloadedState, enhancer2)
-    ↓
-(createStore 增强版 1)
-    │
-    │ return enhancer2(createStore1)(reducer, preloadedState, enhancer3)
-    ↓
-(createStore 增强版 1+2)
-    │
-    │ return enhancer3(createStore1+2)(reducer, preloadedState, applyMiddleware(m1,m2,m3))
-    ↓
-(createStore 增强版 1+2+3)
-    │
-    │ return appleMiddleware(m1,m2,m3)(createStore1+2+3)(reducer)
-    ↓
-生成最终的 store
+原 createStore ————
+                  │
+                  ↓
+return enhancer1(createStore)(reducer, preloadedState, enhancer2)
+   |
+   ├———————→ createStore 增强版 1
+                    │
+                    ↓
+return enhancer2(createStore1)(reducer, preloadedState, enhancer3)
+   |
+   ├———————————→ createStore 增强版 1+2
+                        │
+                        ↓
+return enhancer3(createStore1+2)(reducer, preloadedState, applyMiddleware(m1,m2,m3))
+   |
+   ├————————————————————→ createStore 增强版 1+2+3
+                                     │
+                                     ↓
+return appleMiddleware(m1,m2,m3)(createStore1+2+3)(reducer, preloadedState)
+   |
+   ├——————————————————————————————————→ 生成最终增强版 store
 ```
 
 
@@ -877,11 +882,11 @@ Redux 有五个 API，分别是：
 * `subscribe(listener)`
 * `replaceReducer(nextReducer)`
 
-至此，如果您已经理解上述 API 的作用机理，以及中间件与增强器的概念/区别，本人将不胜荣幸  
-如您对本教程有任何意见或改进的建议，欢迎 [issue][this-issue]，我会尽快予您答复  
-若您觉得我写得还行，不妨点个 [star][this-github] 算是对我的赞赏
+至此，若您已经理解上述 API 的作用机理，以及中间件与增强器的概念/区别  
+本人将不胜荣幸，不妨点个 [star][this-github] 算是对我的赞赏  
+如您对本教程有任何意见或改进的建议，欢迎 [issue][this-issue]，我会尽快予您答复
 
-最后奉上 React + Redux + React Router 的高规格实例：[react-demo][react-demo]
+最后奉上 React + Redux + React Router 的简易留言板实例：[react-demo][react-demo]
 
 > 拓展阅读：[中间件的洋葱模型][middleware-onion-model]
 

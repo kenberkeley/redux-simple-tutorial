@@ -2,7 +2,7 @@
 
 [redux-advanced-tutorial]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
 
-> 原文链接（保持最新版本）：https://github.com/kenberkeley/redux-simple-tutorial/blob/master/middleware-onion-model.md
+> 原文（保持更新）：https://github.com/kenberkeley/redux-simple-tutorial/blob/master/middleware-onion-model.md
 > 
 > 本文是 [Redux 进阶教程][redux-advanced-tutorial] 的拓展阅读
 

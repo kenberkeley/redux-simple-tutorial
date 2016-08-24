@@ -1,5 +1,5 @@
 # Redux 简明教程
-> 原文链接（保持最新版本）：https://github.com/kenberkeley/redux-simple-tutorial
+> 原文链接（保持更新）：https://github.com/kenberkeley/redux-simple-tutorial
 
 > ### 写在前面  
 > 学习一样新技术，难免会有些许的抵触感。尤其是遇到有难度的坎，觉得很难跨过去  
