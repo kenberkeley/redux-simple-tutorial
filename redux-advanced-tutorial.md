@@ -850,7 +850,7 @@ if (typeof reducer !== 'function') {
 ```
 
 如果像 `code-11` 那样有多个 `enhancer`，则 `code-12 【锚点 12-1】` 中的代码会执行多次  
-生成最终的超级增强版 `store`。下面继续奉上 `code-11` 中 `compose` 内部的执行顺序示意图：
+生成最终的超级增强版 `store`。最后，奉上 `code-11` 中 `compose` 内部的执行顺序示意图：
 
 ```
 原 createStore ————
