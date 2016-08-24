@@ -122,7 +122,7 @@ func3 获得参数 3
 re2：6
 ```
 
-## &sect; [createStore(reducer, [initialState])][createStore]
+## &sect; [createStore(reducer, initialState, enhancer)][createStore]
 ### ⊙ 源码分析
 
 ```js
