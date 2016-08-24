@@ -417,7 +417,15 @@ console.log( store.getState() ); // { counter: 1 }
 </script>
 </body>
 </html>
+```
 
+控制台输出：
+
+```js
+Object { counter: 0 }
+Object { counter: 1 }
+Object { counter: 2 }
+Object { counter: 1 }
 ```
 
 > 由上可知，Redux 并不一定要搭配 React 使用。Redux 纯粹只是一个状态管理库，几乎可以搭配任何框架使用  

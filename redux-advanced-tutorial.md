@@ -108,7 +108,7 @@ console.log('re2：' + re2);
 </html>
 ```
 
-控制台打印：
+控制台输出：
 
 ```
 func1 获得参数 0
@@ -512,7 +512,7 @@ export default function todoListReducer(todoList = [], action) {
 }
 ```
   
-无论您的应用状态树有多么的复杂，都可以通过逐层下分地管理对应部分的 `state`：
+无论您的应用状态树有多么的复杂，都可以通过逐层下分管理对应部分的 `state`：
 
 ```
                                  counterReducer(counter, action) -------------------- counter
@@ -557,7 +557,7 @@ function combineReducers(reducers) {
       var reducer = finalReducers[key]
       var previousStateForKey = state[key]                       // 获取当前子 state
       var nextStateForKey = reducer(previousStateForKey, action) // 执行各子 reducer 中获取子 nextState
-      nextState[key] = nextStateForKey                           // 将对应的子 nextState 挂载到对应的键名
+      nextState[key] = nextStateForKey                           // 将子 nextState 挂载到对应的键名
       hasChanged = hasChanged || nextStateForKey !== previousStateForKey
     }
     return hasChanged ? nextState : state
@@ -773,6 +773,17 @@ store.dispatch(dec());
 </script>
 </body>
 </html>
+```
+
+控制台输出：
+
+```
+dispatch 前：{ counter: 0 }
+dispatch 后：{ counter: 1 }
+dispatch 前：{ counter: 1 }
+dispatch 后：{ counter: 2 }
+dispatch 前：{ counter: 2 }
+dispatch 后：{ counter: 1 }
 ```
 
 ***
