@@ -1,5 +1,5 @@
 # Redux 进阶教程
-> 原文（保持更新）：https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
+> 原文（保持更新）：[https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md][advanced-tutorial]
 
 > ### 写在前面  
 > 相信您已经看过 [Redux 简明教程][simple-tutorial]，本教程是简明教程的实战化版本，伴随源码分析  
@@ -891,6 +891,7 @@ Redux 有五个 API，分别是：
 > 拓展阅读：[中间件的洋葱模型][middleware-onion-model]
 
 [simple-tutorial]: https://github.com/kenberkeley/react-simple-tutorial
+[advanced-tutorial]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
 [babel-repl]: http://babeljs.io/repl/
 [redux-src]: https://github.com/reactjs/redux/tree/master/src
 [redux-thunk]: https://github.com/gaearon/redux-thunk

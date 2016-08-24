@@ -1,11 +1,11 @@
 # Redux 简明教程
-> 原文链接（保持更新）：https://github.com/kenberkeley/redux-simple-tutorial
+> 原文链接（保持更新）：[https://github.com/kenberkeley/redux-simple-tutorial][this-github]
 
 > ### 写在前面  
 > 学习一样新技术，难免会有些许的抵触感。尤其是遇到有难度的坎，觉得很难跨过去  
 > 此时您可能会想：为什么我要折腾这东西？之前的技术已经够用了，没必要辛苦自己  
 > 对此我的建议是：不妨先学着玩来装个逼。之后熟悉掌握，再慢慢考虑实用性的问题  
-> 本教程深入浅出，配套入门、进阶源码解读以及文档注释丰满的 Demo 等一条龙服务  
+> 本教程深入浅出，配套[入门][this-github]、[进阶源码解读][advanced-tutorial]以及[文档注释丰满的 Demo][react-demo] 等一条龙服务  
 
 ## &sect; 为什么要用 Redux
 > 当然还有 [Flux][flux]、[Reflux][reflux]、[Mobx][mobx] 等状态管理库可供选择
@@ -423,8 +423,11 @@ console.log( store.getState() ); // { counter: 1 }
 > 由上可知，Redux 并不一定要搭配 React 使用。Redux 纯粹只是一个状态管理库，几乎可以搭配任何框架使用  
 > （上述例子连 jQuery 都没用哦亲）
 
-## [&sect; 下一章：Redux 进阶教程（包含源码分析）](./redux-advanced-tutorial.md)
+## [&sect; 下一章：Redux 进阶教程（包含源码分析）][advanced-tutorial]
 
+[this-github]: https://github.com/kenberkeley/redux-simple-tutorial
+[advanced-tutorial]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
+[react-demo]: https://github.com/kenberkeley/react-demo
 [flux]: https://github.com/facebook/flux
 [reflux]: https://github.com/reflux/refluxjs
 [mobx]: https://github.com/mobxjs/mobx
