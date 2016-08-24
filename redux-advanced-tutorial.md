@@ -21,7 +21,7 @@
 
 除去打酱油的 `utils/warning.js` 以及入口文件 `index.js`，剩下那 5 个就是 Redux 的 API
 
-## &sect; Redux API · [compose(...functions)][compose]
+## &sect; [compose(...functions)][compose]
 > 先说这个 API 的原因是它没有依赖，是一个纯函数
 
 ### ⊙ 源码分析
@@ -122,7 +122,7 @@ func3 获得参数 3
 re2：6
 ```
 
-## &sect; Redux API · [createStore(reducer, [initialState])][createStore]
+## &sect; [createStore(reducer, [initialState])][createStore]
 ### ⊙ 源码分析
 
 ```js
@@ -323,7 +323,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
 > 拓展阅读：阮老师的 [Thunk 函数的含义与用法][ryf-thunk]  
 > 题外话：您不觉得 JavaScript 的回调函数，就是反转控制权最普遍的体现吗？
 
-## &sect; Redux API · [combineReducers(reducers)][combineReducers]
+## &sect; [combineReducers(reducers)][combineReducers]
 ### ⊙ 应用场景
 
 简明教程中的 `code-7` 如下：
@@ -569,7 +569,7 @@ function combineReducers(reducers) {
 > 在此我的注释很少，因为代码写得实在是太过明了了，注释反而影响阅读  
 > 作者 Dan 用了大量的 `for` 循环，的确有点不够优雅
 
-## &sect; Redux API · [bindActionCreators(actionCreators, dispatch)][bindActionCreators]
+## &sect; [bindActionCreators(actionCreators, dispatch)][bindActionCreators]
 > 这个 API 有点鸡肋，它无非就是做了这件事情：`dispatch(ActionCreator(XXX))`
 
 ### ⊙ 源码分析
@@ -637,7 +637,7 @@ $('#btn').on('click', function() {
 
 > 综上，这个 API 没啥卵用，尤其是异步场景下，基本用不上
 
-## &sect; Redux API · [applyMiddleware(...middlewares)][applyMiddleware]
+## &sect; [applyMiddleware(...middlewares)][applyMiddleware]
 > Redux 中文文档 [高级 · Middleware][redux-middleware] 有提到中间件的演化由来
 
 首先要理解何谓 `Middleware`，何谓 `Enhancer`
