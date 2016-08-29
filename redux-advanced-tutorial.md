@@ -141,7 +141,7 @@ export var ActionTypes = {
  * @param  {函数}  reducer 不多解释了
  * @param  {对象}  preloadedState 主要用于前后端同构时的数据同步
  * @param  {函数}  enhancer 很牛逼，可以实现中间件、时间旅行，持久化等
- * ※ Redux 仅提供 appleMiddleware 这个 Store Enhancer ※
+ * ※ Redux 仅提供 applyMiddleware 这个 Store Enhancer ※
  * @return {Store}
  */
 export default function createStore(reducer, preloadedState, enhancer) {
