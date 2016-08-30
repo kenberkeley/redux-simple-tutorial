@@ -324,7 +324,7 @@ var initState = {
 }
 
 function reducer(state, action) {
-  // ※ 应用的初始状态是在第一次执行 reducer 时设置的（除非是服务端渲染） ※
+  // ※ 应用的初始状态是在第一次执行 reducer 时设置的 ※
   if (!state) state = initState
   
   switch (action.type) {
