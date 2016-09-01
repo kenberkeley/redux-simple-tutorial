@@ -312,7 +312,7 @@ Redux 会明确知道是提取 `action.payload`，并且是对应写入到 `stat
 
 > 注意：上面的这个 “更新” 并不是指 `reducer` 可以直接对 `state` 进行修改  
 > Redux 规定，须先复制一份 `state`，在副本 `nextState` 上进行修改操作  
-> 例如，可以使用 lodash 的 `deepClone`，也可以使用 `Object.assign / map / filter/ ...` 等返回副本的函数
+> 例如，可以使用 lodash 的 `cloneDeep`，也可以使用 `Object.assign / map / filter/ ...` 等返回副本的函数
 
 在上面 Action Creator 中提到的 待办事项的 `reducer` 大概是长这个样子 (为了容易理解，在此不使用 ES6 / [Immutable.js][immutable])：
 
@@ -329,7 +329,7 @@ function reducer(state, action) {
   
   switch (action.type) {
     case 'ADD_TODO':
-      var nextState = _.deepClone(state) // 用到了 lodash 的深克隆
+      var nextState = _.cloneDeep(state) // 用到了 lodash 的深克隆
       nextState.todos.push(action.payload) 
       return nextState
 

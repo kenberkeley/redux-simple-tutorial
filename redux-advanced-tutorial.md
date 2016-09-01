@@ -340,7 +340,7 @@ function reducer(state, action) {
   
   switch (action.type) {
     case 'ADD_TODO':
-      var nextState = _.deepClone(state) // 用到了 lodash 的深克隆
+      var nextState = _.cloneDeep(state) // 用到了 lodash 的深克隆
       nextState.todos.push(action.payload) 
       return nextState
 
@@ -359,7 +359,7 @@ var initState = { counter: 0, todos: [] }
 
 function reducer(state, action) {
   if (!state) return initState // 若是初始化可立即返回应用初始状态
-  var nextState = _.deepClone(state) // 否则二话不说先克隆
+  var nextState = _.cloneDeep(state) // 否则二话不说先克隆
   
   switch (action.type) {
     case 'ADD_TODO': // 新增待办事项
