@@ -268,9 +268,14 @@ export default function createStore(reducer, preloadedState, enhancer) {
     // 令 currentListeners 等于 nextListeners，表示正在逐个执行回调函数（这就是上面 ensure 哥的判定条件）
     var listeners = currentListeners = nextListeners
 
-    // 逐个触发回调函数。这里不缓存数组长度是明智的，原因见【悬念1·解疑】
+    // 逐个触发回调函数
     for (var i = 0; i < listeners.length; i++) {
       listeners[i]()
+
+      /* 现在逐个触发回调函数变成了：
+      var listener = listeners[i]
+      listener() // 该中间变量避免了 this 指向 listeners 而造成泄露的问题 */
+      // 在此衷心感谢 @BuptStEve 在 issue7 中指出之前我对此处的错误解读
     }
 
     return action // 为了方便链式调用，dispatch 执行完毕后，返回 action（下文会提到的，稍微记住就好了）
@@ -529,7 +534,7 @@ rootReducer(state, action) —→∑     ↗ optTimeReducer(optTime, action) ---
 
 > 无论是 `dispatch` 哪个 `action`，都会流通**所有的** `reducer`  
 > 表面上看来，这样子很浪费性能，但 JavaScript 对于这种**纯函数**的调用是很高效率的，因此请尽管放心  
-> 这也是为何 `reducer` 必须返回其对应的 `state` 的原因。否则整合状态树时，该 `reducer` 对应的键名就是 `undefined`
+> 这也是为何 `reducer` 必须返回其对应的 `state` 的原因。否则整合状态树时，该 `reducer` 对应的键值就是 `undefined`
 
 ### ⊙ 源码分析
 > 仅截取关键部分，毕竟有很大一部分都是类型检测警告
