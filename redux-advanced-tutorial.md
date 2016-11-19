@@ -458,8 +458,8 @@ state
 reducers/
    ├── index.js <-------------- combineReducers (生成 rootReducer)
    ├── counterReducer.js
-   ├── todoReducers/ <--------- combineReducers
-           ├── index.js
+   ├── todoReducers/
+           ├── index.js <------ combineReducers
            ├── optTimeReducer.js
            ├── todoListReducer.js
 ```
