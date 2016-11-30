@@ -292,7 +292,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
       throw new Error('Expected the nextReducer to be a function.')
     }
 
-    currentReducer = nextReducer //         就是这么简单粗暴！
+    currentReducer = nextReducer         // 就是这么简单粗暴！
     dispatch({ type: ActionTypes.INIT }) // 触发生成新的 state 树
   }
 
@@ -668,8 +668,10 @@ const printStateMiddleware = ({ getState }) => next => action => {
 
 /* 降低逼格写法 */
 function printStateMiddleware(middlewareAPI) { // 记为【锚点-1】，中间件内可用的 API
-  return function (dispatch) {                 // 记为【锚点-2】，传入原 dispatch 的引用
-    return function (action) {
+  return function (dispatch) {                 // 记为【锚点-2】，传入上级中间件处理逻辑（若无则为原 store.dispatch）
+
+    // 下面记为【锚点-3】，整个函数将会被传到下级中间件（如果有的话）作为它的 dispatch 参数
+    return function (action) { // <---------------------------------------------- 这货就叫做【中间件处理逻辑哥】吧
       console.log('state before dispatch', middlewareAPI.getState())
   
       var returnValue = dispatch(action) // 还记得吗，dispatch 的返回值其实还是 action
@@ -713,8 +715,15 @@ export default function applyMiddleware(...middlewares) {
       // 给中间件“装上” API，见上面 ⊙Middleware【降低逼格写法】的【锚点-1】 
       chain = middlewares.map(middleware => middleware(middlewareAPI))
       
-      // 串联各个中间件，为各个中间件传入原 store.dispatch，见【降低逼格写法】的【锚点-2】
+      // 串联所有中间件
       dispatch = compose(...chain)(store.dispatch)
+      // 例如，chain 为 [M3, M2, M1]，而 compose 是从右到左进行“包裹”的
+      // 那么，M1 的 dispatch 参数为 store.dispatch（见【降低逼格写法】的【锚点-2】）
+      // 往后，M2 的 dispatch 参数为 M1 的中间件处理逻辑哥（见【降低逼格写法】的【锚点-3】）
+      // 同样，M3 的 dispatch 参数为 M2 的中间件处理逻辑哥
+      // 最后，我们得到串联后的中间件链：M3(M2(M1(store.dispatch)))
+      //（这种形式的串联类似于洋葱，可参考文末的拓展阅读：中间件的洋葱模型）
+      // 在此衷心感谢 @ibufu 在 issue8 中指出之前我对此处的错误解读
   
       return {
         ...store, // store 的 API 中保留 getState / subsribe / replaceReducer
