@@ -148,9 +148,9 @@ export default function createStore(reducer, preloadedState, enhancer) {
   // 这里省略的代码，到本文的最后再讲述（用于压轴你懂的）
   
   var currentReducer = reducer
-  var currentState = preloadedState //     这就是整个应用的 state
-  var currentListeners = [] //             用于存储订阅的回调函数，dispatch 后逐个执行
-  var nextListeners = currentListeners // 【悬念1：为什么需要两个 存放回调函数 的变量？】
+  var currentState = preloadedState    // 这就是整个应用的 state
+  var currentListeners = []            // 用于存储订阅的回调函数，dispatch 后逐个执行
+  var nextListeners = currentListeners //【悬念1：为什么需要两个 存放回调函数 的变量？】
   var isDispatching = false
 
   /**
@@ -399,7 +399,7 @@ import counterReducer from './counterReducer'
 import todosReducer from './todosReducer'
 
 const rootReducer = combineReducers({
-  counter: counterReducer, // <-------- 键名就是该 reducer 对应管理的 state
+  counter: counterReducer, // 键名就是该 reducer 对应管理的 state
   todos: todosReducer
 })
 
@@ -612,8 +612,8 @@ export default function bindActionCreators(actionCreators, dispatch) {
 <script>
 $('#btn').on('click', function() {
   var content = $('#todoInput').val() // 获取输入框的值
-  var action = addTodo(content) // 执行 Action Creator 获得 action
-  store.dispatch(action) // 手动显式 dispatch 一个 action
+  var action = addTodo(content)       // 执行 Action Creator 获得 action
+  store.dispatch(action)              // 手动显式 dispatch 一个 action
 })
 </script>
 ```
@@ -824,9 +824,9 @@ import { createStore, applyMiddleware, compose } from 'redux'
 
 const store = createStore(
   reducer,
-  preloadedState, // <----- 可选，前后端同构的数据同步
-  compose( // <------------ 还记得吗？compose 是从右到左的哦！
-    applyMiddleware( // <-- 这货也是 Store Enhancer 哦！但这是关乎中间件的增强器，必须置于 compose 执行链的最后
+  preloadedState,    // 可选，前后端同构的数据同步
+  compose(           // 还记得吗？compose 是从右到左的哦！
+    applyMiddleware( // 这货也是 Store Enhancer 哦！但这是关乎中间件的增强器，必须置于 compose 执行链的最后
       middleware1,
       middleware2,
       middleware3
