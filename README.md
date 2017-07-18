@@ -433,3 +433,32 @@ console.log( store.getState() ); // { counter: 1 }
 [redux-devtools]: https://github.com/gaearon/redux-devtools
 [immutable]: https://github.com/facebook/immutable-js
 [jsbin]: http://jsbin.com/zivare/edit?html,console
+
+
+# react state immutable
+
+
+https://facebook.github.io/react/docs/optimizing-performance.html#the-power-of-not-mutating-data
+
+## ES6 `Object.assign()`
+
+```jsx
+
+function updateColorMap(colormap) {
+    return Object.assign({}, colormap, {right: 'blue'});
+}
+```
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+
+## ES7 `object spread properties`
+
+```jsx
+
+function updateColorMap(colormap) {
+    return {...colormap, right: 'blue'};
+}
+
+```
+
+https://github.com/tc39/proposal-object-rest-spread
