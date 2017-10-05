@@ -678,8 +678,9 @@ function printStateMiddleware(middlewareAPI) { // 记为【锚点-1】，中间�
   
       console.log('state after dispatch', middlewareAPI.getState())
 
-      return returnValue // 继续传给下一个中间件作为参数 action
-    }
+      return returnValue // 将 action 返回给上一个中间件（实际上可以返回任意值，或不返回）
+      // 在此衷心感谢 @zaleGZL 在 issue15 中指出之前我对此处的错误解读
+    }
   }
 }
 ```
