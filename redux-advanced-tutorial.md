@@ -918,6 +918,8 @@ Redux 有五个 API，分别是：
 
 > 拓展阅读：[中间件的洋葱模型][middleware-onion-model]
 
+[![tip](https://img.shields.io/badge/Tip-%E6%89%93%E8%B5%8F-brightgreen.svg)](https://github.com/kenberkeley/tip)
+
 [simple-tutorial]: https://github.com/kenberkeley/redux-simple-tutorial
 [advanced-tutorial]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
 [babel-repl]: http://babeljs.io/repl/
