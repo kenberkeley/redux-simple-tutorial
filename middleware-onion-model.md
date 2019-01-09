@@ -182,6 +182,7 @@ nextState <————————————— |     G     |  |    |    |
 ## &sect; 总结
 Redux 与 Express 的中间件执行流程一致：层层进入，层层冒出，就像从中间穿过洋葱般的体验
 
+[![tip](https://img.shields.io/badge/Tip-%E6%89%93%E8%B5%8F-brightgreen.svg)](https://github.com/kenberkeley/tip)
 
 [middleware-onion-model]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/middleware-onion-model.md
 [advanced-tutorial]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
