@@ -421,6 +421,8 @@ console.log( store.getState() ); // { counter: 1 }
 
 ## [&sect; 下一章：Redux 进阶教程][advanced-tutorial]
 
+[![tip](https://img.shields.io/badge/Tip-%E6%89%93%E8%B5%8F-brightgreen.svg)](https://github.com/kenberkeley/tip)
+
 [this-github]: https://github.com/kenberkeley/redux-simple-tutorial
 [advanced-tutorial]: https://github.com/kenberkeley/redux-simple-tutorial/blob/master/redux-advanced-tutorial.md
 [react-demo]: https://github.com/kenberkeley/react-demo
