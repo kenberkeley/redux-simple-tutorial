@@ -266,7 +266,7 @@ function addTodo(content) {
 将该函数应用到一个表单（假设 `store` 为全局变量，并引入了 jQuery ）：
 
 ```html
-<--! 本代码块记为 code-5 -->
+<!-- 本代码块记为 code-5 -->
 <input type="text" id="todoInput" />
 <button id="btn">提交</button>
 
