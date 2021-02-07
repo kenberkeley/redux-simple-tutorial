@@ -29,7 +29,7 @@
 ```js
 /**
  * 看起来逼格很高，实际运用其实是这样子的：
- * compose(f, g, h)(...arg) => f(g(h(...args)))
+ * compose(f, g, h)(...args) => f(g(h(...args)))
  *
  * 值得注意的是，它用到了 reduceRight，因此执行顺序是从右到左
  *
