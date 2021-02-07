@@ -160,7 +160,7 @@ app.use(loggerMiddleware)
 * `subscribe(listener)         # 您可以理解成是 DOM 中的 addEventListener`
 * `replaceReducer(nextReducer) # 一般在 Webpack Code-Splitting 按需加载的时候用`
 
-二者的关系是：`state = store.getState()`
+二者的关系是：`state === store.getState()`
 
 Redux 规定，一个应用只应有一个单一的 `store`，其管理着唯一的应用状态 `state`  
 Redux 还规定，不能直接修改应用的状态 `state`，也就是说，下面的行为是不允许的：
